@@ -3,11 +3,14 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const fetch = require('node-fetch')
 const path = require('path')
+const cors = require('cors')
 
 const app = express()
 const port = 3000
 
 const api_key = process.env.API_KEY
+
+app.use(cors())
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
@@ -85,4 +88,4 @@ app.use('/weather', async (req, res) => {
     res.send(JSON.stringify(solBuffer))
 })
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`))
+app.listen(process.env.PORT || port, () => console.log(`Example app listening on port ${port}!`))

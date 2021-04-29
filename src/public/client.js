@@ -252,7 +252,7 @@ const renderPanel = (state) => {
 
 // Gets picture of the day
 const getImageOfTheDay = (state) => {
-  fetch(`http://localhost:3000/apod`)
+  fetch(`https://marsdash.herokuapp.com/apod`)
     .then((res) => res.json())
     .then((data) => {
       updateStore(state, { apod: data });
