@@ -262,7 +262,7 @@ const getImageOfTheDay = (state) => {
 
 // Gets the weather of the day (atmospheric pressure, no av temperatures, only available at this moment)
 const getWeather = async (state) => {
-  let weatherData = await fetch(`http://localhost:3000/weather`);
+  let weatherData = await fetch(`https://marsdash.herokuapp.com/weather`);
   let parsedWeather = await weatherData.json();
   updateStore(state, { weather: parsedWeather });
 };
@@ -291,7 +291,7 @@ const getPhotos = async (state) => {
     domFeed.innerHTML = `<div class="loading-feed-wrapper">
     <lottie-player class="loader" src="/images/loading.json" background="transparent"  speed="1"  style="width: 300px; height: 300px;" loop autoplay></lottie-player>
     </div>`;
-    fetch(`http://localhost:3000/rovers?rover=${selectedRover}&date=${date[2]}-${date[0]}-${date[1]}`)
+    fetch(`https://marsdash.herokuapp.com/rovers?rover=${selectedRover}&date=${date[2]}-${date[0]}-${date[1]}`)
     .then(res => res.json())
     .then(photoCollection => {
 
