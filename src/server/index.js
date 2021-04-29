@@ -30,6 +30,32 @@ app.get('/apod', async (req, res) => {
     }
 })
 
+app.use('/manifests', async (req, res) => {
+    let rover = req.query.rover.toLowerCase()
+    try {
+        let manifest = await fetch(`https://api.nasa.gov/mars-photos/api/v1/manifests/${rover}?api_key=${api_key}`)
+        .then(res => res.json())
+        .catch(err => console.log(err))
+
+        const launch = manifest.photo_manifest["launch_date"]
+        const landing = manifest.photo_manifest["landing_date"]
+        const status = manifest.photo_manifest["status"]
+        const recentPhoto = manifest.photo_manifest["max_date"]
+
+        const manifestPackage = {
+            launch: launch,
+            landing: landing,
+            status: status,
+            recentPhoto: recentPhoto
+        }
+
+        res.send(JSON.stringify(manifestPackage))
+    }
+    catch (err) {
+        console.log(err)
+    }
+})
+
 app.use('/rovers', async (req, res) => {
     let rover = req.query.rover.toLowerCase()
     let date = req.query.date

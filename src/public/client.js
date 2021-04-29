@@ -10,6 +10,11 @@ const store = Immutable.Map({
     "Opportunity": "",
     "Spirit": "",
   }),
+  manifests: Immutable.Map({
+    "Curiosity": "",
+    "Opportunity": "",
+    "Spirit": "",
+  }),
   selectedRover: "Curiosity",
   view: "home",
   date: yesterday,
@@ -91,15 +96,17 @@ const App = (state, cb) => {
         getWeather(state);
     } else {
         setTimeout(() => {
-            cb(feedView());
+            cb(feedView(state));
             renderPanel(state);
             updateNav(state);
+            getManifest(state);
             updateListeners(state);
             getPhotos(state);
       }, 2000);
     }
   } else if (state.get("view") === "feed" && state.get("action") === "update rover" || state.get("action") === "load photos") {
     updateNav(state);
+    getManifest(state);
     getPhotos(state);
     updateListeners(state);
 
@@ -191,7 +198,19 @@ const loadingView = () => {
     `;
 };
 
-const feedView = () => {
+const feedView = (state) => {
+  let selectedRover = state.get("selectedRover")
+  let selfie;
+
+  if (selectedRover === "Curiosity"){
+    selfie = "Curiosity.jpg"
+  }
+  else if (selectedRover === "Opportunity"){
+    selfie = "Opportunity.jpeg"
+  }
+  else {
+    selfie = "Spirit.jpeg"
+  }
   return `
     <div class="body-wrapper light">
         <div class="home-header light">
@@ -208,6 +227,10 @@ const feedView = () => {
             </div>
             <div class="feed-container">
                 <div class="feed-wrapper">
+                    <div class="rover-wrapper">
+                    <img class="rover-selfie" src="/images/${selfie}"/>
+                    <div class="manifest-wrapper"></div>
+                    </div>
                     <div class="padding-divider"></div>
                     <p class="text-regular margin-bottom">Latest Photos From Your Favourite Rovers</p>
                     <div class="underline margin-bottom"></div>
@@ -266,6 +289,54 @@ const getWeather = async (state) => {
   let parsedWeather = await weatherData.json();
   updateStore(state, { weather: parsedWeather });
 };
+
+
+const getManifest = async (state) => {
+  let selectedRover = state.get("selectedRover");
+  let aboutRover = document.querySelector(".manifest-wrapper")
+  let roverManifests = state.get("manifests") 
+
+  aboutRover.innerHTML = `<div class="rover-data">
+  <div class="loader-line1"></div>
+  <div class="loader-line2"></div>
+  <div class="loader-line3"></div>
+  <div class="loader-line4"></div>
+  </div>`;
+
+  if (roverManifests.get(`${selectedRover}`) === "") {
+    let newManifestsObject = {}
+
+    roverManifests.mapKeys((key, val) => {
+      if (key !== selectedRover){
+        newManifestsObject[key] = val
+      }
+    })
+
+    fetch(`https://marsdash.herokuapp.com/manifests?rover=${selectedRover}`)
+    .then(res => res.json())
+    .then(manifest => {
+      newManifestsObject[selectedRover] = manifest
+      updateStore(state, { manifests: Immutable.Map(newManifestsObject) })
+    })
+    .catch(err => console.log(err))
+
+  }
+  else {
+    aboutRover.innerHTML = ""
+    let manifest = state.get("manifests").get(`${selectedRover}`)
+    aboutRover.innerHTML = `
+    <div class="rover-data">
+    <p>Launch Date: ${manifest.launch}</p>
+    <p>Landing Date: ${manifest.landing}</p>
+    <p>Mission Status: ${manifest.status}</p>
+    <p>Most Recent Photoshoot: ${manifest.recentPhoto}</p>
+    </div>
+    `
+  }
+
+
+}
+
 
 // Renders images of the { selectedRover } and prepares the other feeds
 const getPhotos = async (state) => {

@@ -3,6 +3,7 @@
 
 /* -------------------  MOBILE  --------------------- */
 
+
 body {
   display: flex;
   flex-direction: column;
@@ -145,6 +146,20 @@ body {
     align-items: center;
     box-shadow: 1px 0px 10px rgba(0, 0, 0, 0.05);
     margin-bottom: 60px;
+  }
+
+  .rover-wrapper {
+    margin-top: 60px;
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+  }
+
+  .manifest-wrapper {
+    width: 40%;
   }
 
   .card {
@@ -310,6 +325,77 @@ body {
   .apod-image {
     padding-bottom: 20px;
   }
+
+  .rover-selfie {
+    width: 60%;
+    height: 350px;
+    object-fit: cover;
+    margin-right: 40px;
+  }
+
+  .loader-line1 {
+    width: 0px;
+    height: 10px;
+    margin-bottom: 20px;
+    background-color: rgba(0, 0, 0, 0.15);
+    animation-name: loader;
+    animation-duration: 2s;
+    animation-delay: 0.25s;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+  }
+
+  .loader-line2 {
+    width: 0px;
+    height: 10px;
+    margin-bottom: 20px;
+    background-color: rgba(0, 0, 0, 0.15);
+    animation-name: loader;
+    animation-duration: 2s;
+    animation-delay: 0.45s;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+  }
+
+  .loader-line3 {
+    width: 0px;
+    height: 10px;
+    margin-bottom: 20px;
+    background-color: rgba(0, 0, 0, 0.15);
+    animation-name: loader;
+    animation-duration: 2s;
+    animation-delay: 0.65s;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+  }
+
+  .loader-line4 {
+    width: 0px;
+    height: 10px;
+    margin-bottom: 20px;
+    background-color: rgba(0, 0, 0, 0.15);
+    animation-name: loader;
+    animation-duration: 2s;
+    animation-delay: 0.85s;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+  }
+
+
+  /* animation code */
+
+@keyframes loader {
+  0% {
+    width: 0px;
+  }
+  50% {
+    width: 100px
+  }
+  100% {
+    width: 0px;
+  }
+}
+
 
   /* text styles */
 
