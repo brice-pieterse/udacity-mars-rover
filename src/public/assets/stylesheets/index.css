@@ -62,6 +62,7 @@ body {
     width: 100%;
     height: 100%;
   }
+  
 
 
   /* general styles */
@@ -149,13 +150,13 @@ body {
   }
 
   .rover-wrapper {
-    margin-top: 60px;
+    margin-top: 40px;
     width: 100%;
     height: auto;
     display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
   }
 
   .manifest-wrapper {
@@ -323,14 +324,40 @@ body {
   }
 
   .apod-image {
+    height: 350px;
+    width: 100%;
     padding-bottom: 20px;
+    object-fit: cover;
+  }
+
+  .apod-loader {
+    margin-bottom: 40px;
+    height: 350px;
+    width: 100%;
+    animation-name: apodLoader;
+    animation-duration: 1s;
+    animation-delay: 0.25s;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
   }
 
   .rover-selfie {
-    width: 60%;
+    display: none;
+    width: 100%;
     height: 350px;
     object-fit: cover;
-    margin-right: 40px;
+    margin-bottom: 40px;
+  }
+
+  .selfie-loader {
+    width: 60%;
+    height: 350px;
+    margin-bottom: 40px;
+    animation-name: apodLoader;
+    animation-duration: 1s;
+    animation-delay: 0.25s;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
   }
 
   .loader-line1 {
@@ -396,6 +423,18 @@ body {
   }
 }
 
+@keyframes apodLoader {
+  0% {
+    background-color: rgba(0, 0, 0, 0.15);
+  }
+  50% {
+    background-color: rgba(0, 0, 0, 0.25);
+  }
+  100% {
+    background-color: rgba(0, 0, 0, 0.15);
+  }
+}
+
 
   /* text styles */
 
@@ -433,10 +472,6 @@ body {
     color: #2D3643;
     text-align: left;
   }
-
-  .text-regular.padding-bottom {
-    margin-bottom: 0px;
-  }
   
   .text-regular.light {
     color: aliceblue;
@@ -448,6 +483,10 @@ body {
 
   .text-regular.margin-bottom {
     margin-bottom: 5px;
+  }
+
+  p.large-margin-bottom {
+    margin-bottom: 20px;
   }
 
   .text-regular.active {
@@ -462,6 +501,16 @@ body {
     color: #2D3643;
     text-align: center;
     margin-bottom: 15px;
+  }
+
+  .text-regular.bold {
+    font-weight: 800;
+    color: #2d364349;
+  }
+
+  p.regular {
+    color: #2D3643;;
+    font-weight: 600;
   }
 
   .text-small {
@@ -571,6 +620,7 @@ body {
   
   
     /* general styles */
+
   
     .padding-divider {
       height: 60px;
@@ -818,6 +868,25 @@ body {
     .apod-image {
       padding-bottom: 20px;
     }
+
+    .rover-selfie {
+      display: none;
+      width: 100%;
+      height: 350px;
+      object-fit: cover;
+      margin-bottom: 40px;
+    }
+  
+    .selfie-loader {
+      width: 100%;
+      height: 350px;
+      margin-bottom: 40px;
+      animation-name: apodLoader;
+      animation-duration: 1s;
+      animation-delay: 0.25s;
+      animation-timing-function: ease-in-out;
+      animation-iteration-count: infinite;
+    }
   
     /* text styles */
   
@@ -992,6 +1061,16 @@ body {
     align-items: center;
     width: 100%;
     height: 100%;
+  }
+
+  .rover-wrapper {
+    margin-top: 60px;
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
   }
 
 
@@ -1242,6 +1321,25 @@ body {
 
   .apod-image {
     padding-bottom: 20px;
+  }
+
+  .rover-selfie {
+    display: none;
+    width: 60%;
+    height: 350px;
+    object-fit: cover;
+    margin-right: 40px;
+  }
+
+  .selfie-loader {
+    width: 60%;
+    height: 350px;
+    margin-right: 40px;
+    animation-name: apodLoader;
+    animation-duration: 1s;
+    animation-delay: 0.25s;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
   }
 
   /* text styles */

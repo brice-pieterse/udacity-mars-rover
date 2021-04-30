@@ -83,33 +83,51 @@ const render = async (root, state) => {
 
 
 const App = (state, cb) => {
+  const selectedRover = state.get("selectedRover")
   if (state.get("view") === "home") {
     cb(homeView());
     updateListeners(state);
   } else if (state.get("view") === "loading") {
     cb(loadingView());
+    setTimeout(() => {
     updateListeners(state);
+    }, 1000)
   } else if (state.get("view") === "feed" && state.get("action") === "loading feed") {
     if (state.get("apod") === "") {
+        cb(feedView());
+        updateNav(state);
         getImageOfTheDay(state);
     } else if (state.get("weather") === "") {
         getWeather(state);
+    } else if (state.get("manifests").get(`${selectedRover}`) === ""){
+        getManifest(state);
+    } else if (state.get("roverPhotos").get(`${selectedRover}`) === "") {
+        getPhotos(state);
     } else {
-        setTimeout(() => {
-            cb(feedView(state));
-            renderPanel(state);
-            updateNav(state);
-            getManifest(state);
-            updateListeners(state);
-            getPhotos(state);
-      }, 2000);
+        renderPanel(state);
+        updateManifest(state)
+        updatePhotos(state)
+        updateListeners(state);
     }
-  } else if (state.get("view") === "feed" && state.get("action") === "update rover" || state.get("action") === "load photos") {
-    updateNav(state);
-    getManifest(state);
-    getPhotos(state);
-    updateListeners(state);
-
+  } else if (state.get("view") === "feed" && state.get("action") === "update rover") {
+      let selfieLoader = document.querySelector('.selfie-loader')
+      let roverPhoto = document.querySelector('.rover-selfie')
+      let domFeed = document.querySelector(".photo-feed");
+      domFeed.innerHTML = feedLoader()
+      selfieLoader.style.display = "block"
+      roverPhoto.style.display = "none"
+    if (state.get("manifests").get(`${selectedRover}`) === "") {
+      getManifest(state);
+    }
+    else if (state.get("roverPhotos").get(`${selectedRover}`) === "") {
+      getPhotos(state);
+    }
+    else {
+      updateNav(state);
+      updateManifest(state)
+      updatePhotos(state)
+      updateListeners(state);
+    }
   } else if (
     (state.get("view") === "feed" && state.get("action") === "open apod") ||
     state.get("action") === "open weather"
@@ -139,7 +157,7 @@ const updatePanelToApod = (state) => {
         `;
   } else
     return `
-            <img class="apod-image" src="${parsedApod.image.url}" height="30vh" width="100%"/>
+            <img class="apod-image" src="${parsedApod.image.url}"/>
             <p class="text-regular margin-bottom">Astronomy Pic of The Day</p>
             <div class="underline margin-bottom"></div>
             <p class="text-small">${parsedApod.image.explanation}</p>
@@ -198,19 +216,8 @@ const loadingView = () => {
     `;
 };
 
-const feedView = (state) => {
-  let selectedRover = state.get("selectedRover")
-  let selfie;
-
-  if (selectedRover === "Curiosity"){
-    selfie = "Curiosity.jpg"
-  }
-  else if (selectedRover === "Opportunity"){
-    selfie = "Opportunity.jpeg"
-  }
-  else {
-    selfie = "Spirit.jpeg"
-  }
+const feedView = () => {
+  let loader = feedLoader()
   return `
     <div class="body-wrapper light">
         <div class="home-header light">
@@ -223,18 +230,33 @@ const feedView = (state) => {
         </div>
         <div class="main feed">
             <div class="panel-container large-view">
-                <div class="apod"></div>
+                <div class="apod">
+                <div class="apod-loader"></div>
+                <div class="loader-line1"></div>
+                <div class="loader-line2"></div>
+                <div class="loader-line3"></div>
+                <div class="loader-line4"></div>
+                </div>
             </div>
             <div class="feed-container">
                 <div class="feed-wrapper">
                     <div class="rover-wrapper">
-                    <img class="rover-selfie" src="/images/${selfie}"/>
-                    <div class="manifest-wrapper"></div>
+                    <div class="selfie-loader"></div>
+                    <img class="rover-selfie" src=""/>
+                    <div class="manifest-wrapper">
+                    <div class="rover-data">
+                    <div class="loader-line1"></div>
+                    <div class="loader-line2"></div>
+                    <div class="loader-line3"></div>
+                    <div class="loader-line4"></div>
+                    </div>
+                    </div>
                     </div>
                     <div class="padding-divider"></div>
                     <p class="text-regular margin-bottom">Latest Photos From Your Favourite Rovers</p>
                     <div class="underline margin-bottom"></div>
                     <div class="photo-feed">
+                    ${loader}
                     </div>
                 </div>
             </div>
@@ -242,6 +264,13 @@ const feedView = (state) => {
     </div>
     `;
 };
+
+
+const feedLoader = () => {
+  return `<div class="loading-feed-wrapper">
+  <lottie-player class="loader" src="/images/loading.json" background="transparent"  speed="1"  style="width: 300px; height: 300px;" loop autoplay></lottie-player>
+</div>`
+}
 
 const updateNav = (state) => {
   let nav = document.querySelector(".rover-nav");
@@ -259,6 +288,7 @@ const updateNav = (state) => {
 
 const renderPanel = (state) => {
   let panel = document.querySelectorAll(".apod");
+  panel.innerHTML = ""
   if (state.get("panel") === "weather") {
     panel.forEach((panel) => {
       panel.innerHTML = updatePanelToWeather(state);
@@ -269,6 +299,66 @@ const renderPanel = (state) => {
     })
   }
 };
+
+const updateManifest = (state) => {
+  let loader = document.querySelector('.selfie-loader')
+  let roverPhoto = document.querySelector('.rover-selfie')
+  loader.style.display = "none"
+  roverPhoto.style.display = "block"
+  let selectedRover = state.get("selectedRover");
+  let aboutRover = document.querySelector(".manifest-wrapper")
+  let selfie;
+
+  if (selectedRover === "Curiosity"){
+    selfie = "Curiosity.jpg"
+  }
+  else if (selectedRover === "Opportunity"){
+    selfie = "Opportunity.jpeg"
+  }
+  else {
+    selfie = "Spirit.jpeg"
+  }
+
+  roverPhoto.src = `/images/${selfie}`
+  aboutRover.innerHTML = ""
+    let manifest = state.get("manifests").get(`${selectedRover}`)
+    aboutRover.innerHTML = `
+    <div class="rover-data">
+    <p class= "text-regular bold margin-bottom">Launch Date:</p>
+    <p class="large-margin-bottom">${manifest.launch}</p>
+    <p class= "text-regular bold margin-bottom">Landing Date:</p>
+    <p class="large-margin-bottom">${manifest.landing}</p>
+    <p class= "text-regular bold margin-bottom">Mission Status:</p>
+    <p class="large-margin-bottom">${manifest.status}</p>
+    <p class= "text-regular bold margin-bottom">Most Recent Photo:</p>
+    <p class="large-margin-bottom">${manifest.recentPhoto}</p>
+    </div>
+    `
+}
+
+const updatePhotos = (state) => {
+  let domFeed = document.querySelector(".photo-feed");
+  domFeed.innerHTML = "";
+  renderPhotoCollection(domFeed, state);
+}
+
+const renderPhotoCollection = (root, state) => {
+  let selectedRover = state.get("selectedRover")
+  let photoCollection = state.get("roverPhotos").get(`${selectedRover}`)
+  photoCollection.photos.forEach((photo) => {
+      let card = document.createElement("DIV")
+      card.classList.add('card')
+      card.innerHTML = `
+        <div class="underline margin-bottom float-top"></div>
+        <div class="photo-info">
+        <p class="text-regular margin-bottom">${photo["rover"]["name"]}'s ${photo["camera"]["full_name"]}</p>
+        <p class="text-small dull">Sol ${photo["sol"]}</p>
+        </div>
+        <div class="underline hidden margin-bottom"></div>
+        <img style="min-width: 100%; height: auto; object-fit: cover" src="${photo["img_src"]}"/>`
+
+        root.appendChild(card) })
+}
 
 
 // ------------------------------------------------------  API CALLS
@@ -303,8 +393,7 @@ const getManifest = async (state) => {
   <div class="loader-line4"></div>
   </div>`;
 
-  if (roverManifests.get(`${selectedRover}`) === "") {
-    let newManifestsObject = {}
+  let newManifestsObject = {}
 
     roverManifests.mapKeys((key, val) => {
       if (key !== selectedRover){
@@ -319,80 +408,33 @@ const getManifest = async (state) => {
       updateStore(state, { manifests: Immutable.Map(newManifestsObject) })
     })
     .catch(err => console.log(err))
-
-  }
-  else {
-    aboutRover.innerHTML = ""
-    let manifest = state.get("manifests").get(`${selectedRover}`)
-    aboutRover.innerHTML = `
-    <div class="rover-data">
-    <p>Launch Date: ${manifest.launch}</p>
-    <p>Landing Date: ${manifest.landing}</p>
-    <p>Mission Status: ${manifest.status}</p>
-    <p>Most Recent Photoshoot: ${manifest.recentPhoto}</p>
-    </div>
-    `
-  }
-
-
 }
 
 
 // Renders images of the { selectedRover } and prepares the other feeds
 const getPhotos = async (state) => {
-
   let roverPhotos = state.get("roverPhotos")
   let date = state.get("date");
   let selectedRover = state.get("selectedRover");
-  let domFeed = document.querySelector(".photo-feed");
-  domFeed.innerHTML = "";
   date = date.toLocaleDateString("en-US").split("/");
 
   // copies any cached data of other rover photos into a new rover photos object
+  let newRoverPhotosObject = {};
 
-  if (roverPhotos.get(`${selectedRover}`) === "") {
-    let newRoverPhotosObject = {};
+  roverPhotos.mapKeys((key, val) => {
+    if (key !== selectedRover){
+      newRoverPhotosObject[key] = val
+    }
+  })
 
-    roverPhotos.mapKeys((key, val) => {
-      if (key !== selectedRover){
-        newRoverPhotosObject[key] = val
-      }
-    })
 
-    domFeed.innerHTML = `<div class="loading-feed-wrapper">
-    <lottie-player class="loader" src="/images/loading.json" background="transparent"  speed="1"  style="width: 300px; height: 300px;" loop autoplay></lottie-player>
-    </div>`;
-    fetch(`https://marsdash.herokuapp.com/rovers?rover=${selectedRover}&date=${date[2]}-${date[0]}-${date[1]}`)
-    .then(res => res.json())
-    .then(photoCollection => {
+  fetch(`https://marsdash.herokuapp.com/rovers?rover=${selectedRover}&date=${date[2]}-${date[0]}-${date[1]}`)
+  .then(res => res.json())
+  .then(photoCollection => {
 
-        // caches the photos for that rover in the new roverphotos object, creates a new store
-        newRoverPhotosObject[selectedRover] = photoCollection
-        updateStore(state, { roverPhotos: Immutable.Map(newRoverPhotosObject), action: "load photos" })
-    })
-    .catch(err => console.log(err))
-
-  }
-  else {
-      domFeed.innerHTML = ""
-      renderPhotoCollection(domFeed, state);
-  }
-}
-
-const renderPhotoCollection = (root, state) => {
-    let selectedRover = state.get("selectedRover")
-    let photoCollection = state.get("roverPhotos").get(`${selectedRover}`)
-    photoCollection.photos.forEach((photo) => {
-        let card = document.createElement("DIV")
-        card.classList.add('card')
-        card.innerHTML = `
-          <div class="underline margin-bottom float-top"></div>
-          <div class="photo-info">
-          <p class="text-regular margin-bottom">${photo["rover"]["name"]}'s ${photo["camera"]["full_name"]}</p>
-          <p class="text-small dull">Sol ${photo["sol"]}</p>
-          </div>
-          <div class="underline hidden margin-bottom"></div>
-          <img style="min-width: 100%; height: auto; object-fit: cover" src="${photo["img_src"]}"/>`
-
-          root.appendChild(card) })
+      // caches the photos for that rover in the new roverphotos object, creates a new store
+      newRoverPhotosObject[selectedRover] = photoCollection
+      updateStore(state, { roverPhotos: Immutable.Map(newRoverPhotosObject) })
+  })
+  .catch(err => console.log(err))
 }
