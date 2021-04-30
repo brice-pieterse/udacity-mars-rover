@@ -169,9 +169,9 @@ const updatePanelToWeather = (state) => {
   let weather = state.get("weather");
   let weatherData = weather.toJS()
   let weatherDays = "";
-  for (let sol of weatherData) {
+  weatherData.forEach(sol => {
     weatherDays += `<div class="sol-weather-wrapper"><div class="calendar"><p class="text-small dull">Sol</p><p>${sol.name}</p></div><p>${sol["PRE"].av} Pascals</p></div>`;
-  }
+  })
   let weatherPanel = `
     <div class="weather-section"><p class="text-regular margin-bottom">Mars Atmospheric Pressure</p><div class="underline margin-bottom"></div>${weatherDays}<button class="apod-btn full-width float-bottom">Checkout The Picture of The Day</button></div>
     `;
