@@ -89,7 +89,6 @@ app.use('/rovers', async (req, res) => {
                 recentsIndex--
             }
             data = { photos: buffer }
-            console.log(data)
         }
         res.send(JSON.stringify(data))
     }
