@@ -70,7 +70,7 @@ app.use('/rovers', async (req, res) => {
 
             const recents = manifest.photo_manifest.photos
             /* .slice(manifest.photo_manifest.photos.length-26) */
-            const recentsIndex = recents.length - 1
+            let recentsIndex = recents.length - 1
             let buffer = []
             while(recentsIndex >= 0 && buffer.length <= 25){
                 const newDate = recents[recentsIndex].earth_date
@@ -88,7 +88,8 @@ app.use('/rovers', async (req, res) => {
                 buffer = buffer.concat(uniquePhotos)
                 recentsIndex--
             }
-            data = {photos: buffer}
+            data = { photos: buffer }
+            console.log(data)
         }
         res.send(JSON.stringify(data))
     }
