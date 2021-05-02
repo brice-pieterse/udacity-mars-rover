@@ -166,13 +166,13 @@ const updatePanelToApod = (state) => {
 };
 
 const updatePanelToWeather = (state) => {
-  let weather = state.get("weather");
-  let weatherData = weather.toJS()
+  const weather = state.get("weather");
+  const weatherData = weather.toJS()
   let weatherDays = "";
   weatherData.forEach(sol => {
     weatherDays += `<div class="sol-weather-wrapper"><div class="calendar"><p class="text-small dull">Sol</p><p>${sol.name}</p></div><p>${sol["PRE"].av} Pascals</p></div>`;
   })
-  let weatherPanel = `
+  const weatherPanel = `
     <div class="weather-section"><p class="text-regular margin-bottom">Mars Atmospheric Pressure</p><div class="underline margin-bottom"></div>${weatherDays}<button class="apod-btn full-width float-bottom">Checkout The Picture of The Day</button></div>
     `;
   return weatherPanel;
@@ -217,7 +217,7 @@ const loadingView = () => {
 };
 
 const feedView = () => {
-  let loader = feedLoader()
+  const loader = feedLoader()
   return `
     <div class="body-wrapper light">
         <div class="home-header light">
@@ -273,8 +273,8 @@ const feedLoader = () => {
 }
 
 const updateNav = (state) => {
-  let nav = document.querySelector(".rover-nav");
-  let roverNav = state.get("rovers")
+  const nav = document.querySelector(".rover-nav");
+  const roverNav = state.get("rovers")
     .map((roverName) => {
       let status = "inactive";
       if (state.get("selectedRover") === roverName) {
@@ -287,7 +287,7 @@ const updateNav = (state) => {
 };
 
 const renderPanel = (state) => {
-  let panel = document.querySelectorAll(".apod");
+  const panel = document.querySelectorAll(".apod");
   panel.innerHTML = ""
   if (state.get("panel") === "weather") {
     panel.forEach((panel) => {
@@ -301,12 +301,12 @@ const renderPanel = (state) => {
 };
 
 const updateManifest = (state) => {
-  let loader = document.querySelector('.selfie-loader')
-  let roverPhoto = document.querySelector('.rover-selfie')
+  const loader = document.querySelector('.selfie-loader')
+  const roverPhoto = document.querySelector('.rover-selfie')
   loader.style.display = "none"
   roverPhoto.style.display = "block"
-  let selectedRover = state.get("selectedRover");
-  let aboutRover = document.querySelector(".manifest-wrapper")
+  const selectedRover = state.get("selectedRover");
+  const aboutRover = document.querySelector(".manifest-wrapper")
   let selfie;
 
   if (selectedRover === "Curiosity"){
@@ -321,7 +321,7 @@ const updateManifest = (state) => {
 
   roverPhoto.src = `/images/${selfie}`
   aboutRover.innerHTML = ""
-    let manifest = state.get("manifests").get(`${selectedRover}`)
+  const manifest = state.get("manifests").get(`${selectedRover}`)
     aboutRover.innerHTML = `
     <div class="rover-data">
     <p class= "text-regular bold margin-bottom">Launch Date:</p>
@@ -337,16 +337,16 @@ const updateManifest = (state) => {
 }
 
 const updatePhotos = (state) => {
-  let domFeed = document.querySelector(".photo-feed");
+  const domFeed = document.querySelector(".photo-feed");
   domFeed.innerHTML = "";
   renderPhotoCollection(domFeed, state);
 }
 
 const renderPhotoCollection = (root, state) => {
-  let selectedRover = state.get("selectedRover")
-  let photoCollection = state.get("roverPhotos").get(`${selectedRover}`)
+  const selectedRover = state.get("selectedRover")
+  const photoCollection = state.get("roverPhotos").get(`${selectedRover}`)
   photoCollection.photos.forEach((photo) => {
-      let card = document.createElement("DIV")
+      const card = document.createElement("DIV")
       card.classList.add('card')
       card.innerHTML = `
         <div class="underline margin-bottom float-top"></div>
@@ -375,16 +375,16 @@ const getImageOfTheDay = (state) => {
 
 // Gets the weather of the day (atmospheric pressure, no av temperatures, only available at this moment)
 const getWeather = async (state) => {
-  let weatherData = await fetch(`https://marsdash.herokuapp.com/weather`);
-  let parsedWeather = await weatherData.json();
+  const weatherData = await fetch(`https://marsdash.herokuapp.com/weather`);
+  const parsedWeather = await weatherData.json();
   updateStore(state, { weather: parsedWeather });
 };
 
 
 const getManifest = async (state) => {
-  let selectedRover = state.get("selectedRover");
-  let aboutRover = document.querySelector(".manifest-wrapper")
-  let roverManifests = state.get("manifests") 
+  const selectedRover = state.get("selectedRover");
+  const aboutRover = document.querySelector(".manifest-wrapper")
+  const roverManifests = state.get("manifests") 
 
   aboutRover.innerHTML = `<div class="rover-data">
   <div class="loader-line1"></div>
@@ -393,7 +393,7 @@ const getManifest = async (state) => {
   <div class="loader-line4"></div>
   </div>`;
 
-  let newManifestsObject = {}
+  const newManifestsObject = {}
 
     roverManifests.mapKeys((key, val) => {
       if (key !== selectedRover){
@@ -413,13 +413,13 @@ const getManifest = async (state) => {
 
 // Renders images of the { selectedRover } and prepares the other feeds
 const getPhotos = async (state) => {
-  let roverPhotos = state.get("roverPhotos")
+  const roverPhotos = state.get("roverPhotos")
   let date = state.get("date");
-  let selectedRover = state.get("selectedRover");
+  const selectedRover = state.get("selectedRover");
   date = date.toLocaleDateString("en-US").split("/");
 
   // copies any cached data of other rover photos into a new rover photos object
-  let newRoverPhotosObject = {};
+  const newRoverPhotosObject = {};
 
   roverPhotos.mapKeys((key, val) => {
     if (key !== selectedRover){

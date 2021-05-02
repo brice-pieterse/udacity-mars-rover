@@ -22,7 +22,7 @@ app.use('/', express.static(path.join(__dirname, '../public')))
 // example API call
 app.get('/apod', async (req, res) => {
     try {
-        let image = await fetch(`https://api.nasa.gov/planetary/apod?api_key=${api_key}`)
+        const image = await fetch(`https://api.nasa.gov/planetary/apod?api_key=${api_key}`)
             .then(res => res.json())
         res.send({ image })
     } catch (err) {
@@ -31,7 +31,7 @@ app.get('/apod', async (req, res) => {
 })
 
 app.use('/manifests', async (req, res) => {
-    let rover = req.query.rover.toLowerCase()
+    const rover = req.query.rover.toLowerCase()
     try {
         let manifest = await fetch(`https://api.nasa.gov/mars-photos/api/v1/manifests/${rover}?api_key=${api_key}`)
         .then(res => res.json())
@@ -57,8 +57,8 @@ app.use('/manifests', async (req, res) => {
 })
 
 app.use('/rovers', async (req, res) => {
-    let rover = req.query.rover.toLowerCase()
-    let date = req.query.date
+    const rover = req.query.rover.toLowerCase()
+    const date = req.query.date
     try {
         let data = await fetch(`https://api.nasa.gov/mars-photos/api/v1/rovers/${rover}/photos?earth_date=${date}&api_key=${api_key}`)
             .then(res => res.json())
@@ -68,17 +68,17 @@ app.use('/rovers', async (req, res) => {
                 .then(res => res.json())
                 .catch(err => console.log(err))
 
-            let recents = manifest.photo_manifest.photos
+            const recents = manifest.photo_manifest.photos
             /* .slice(manifest.photo_manifest.photos.length-26) */
-            let recentsIndex = recents.length-1
+            const recentsIndex = recents.length - 1
             let buffer = []
             while(recentsIndex >= 0 && buffer.length <= 25){
-                let newDate = recents[recentsIndex].earth_date
+                const newDate = recents[recentsIndex].earth_date
                 photos = await fetch(`https://api.nasa.gov/mars-photos/api/v1/rovers/${rover}/photos?earth_date=${newDate}&api_key=${api_key}`)
                 data = await photos.json()
                 // get unique photos from that data, check what camera took the photos
-                let photosbyCam = []
-                let uniquePhotos = []
+                const photosbyCam = []
+                const uniquePhotos = []
                 for (let photo of data.photos){
                     if (!photosbyCam.includes(photo["camera"]["full_name"])){
                         photosbyCam.push(photo["camera"]["full_name"])
@@ -89,11 +89,6 @@ app.use('/rovers', async (req, res) => {
                 recentsIndex--
             }
             data = {photos: buffer}
-            /*
-            photos = await fetch(`https://api.nasa.gov/mars-photos/api/v1/rovers/${rover}/photos?earth_date=${date}&api_key=${api_key}`)
-            data = await photos.json()
-            console.log("heres your data", data)
-            */
         }
         res.send(JSON.stringify(data))
     }
