@@ -33,7 +33,7 @@ app.get('/apod', async (req, res) => {
 app.use('/manifests', async (req, res) => {
     const rover = req.query.rover.toLowerCase()
     try {
-        let manifest = await fetch(`https://api.nasa.gov/mars-photos/api/v1/manifests/${rover}?api_key=${api_key}`)
+        const manifest = await fetch(`https://api.nasa.gov/mars-photos/api/v1/manifests/${rover}?api_key=${api_key}`)
         .then(res => res.json())
         .catch(err => console.log(err))
 
@@ -64,7 +64,7 @@ app.use('/rovers', async (req, res) => {
             .then(res => res.json())
         if (data.photos.length === 0){
             // get most recent date from when photos exist
-            let manifest = await fetch(`https://api.nasa.gov/mars-photos/api/v1/manifests/${rover}?api_key=${api_key}`)
+            const manifest = await fetch(`https://api.nasa.gov/mars-photos/api/v1/manifests/${rover}?api_key=${api_key}`)
                 .then(res => res.json())
                 .catch(err => console.log(err))
 
@@ -77,8 +77,8 @@ app.use('/rovers', async (req, res) => {
                 photos = await fetch(`https://api.nasa.gov/mars-photos/api/v1/rovers/${rover}/photos?earth_date=${newDate}&api_key=${api_key}`)
                 data = await photos.json()
                 // get unique photos from that data, check what camera took the photos
-                const photosbyCam = []
-                const uniquePhotos = []
+                let photosbyCam = []
+                let uniquePhotos = []
                 for (let photo of data.photos){
                     if (!photosbyCam.includes(photo["camera"]["full_name"])){
                         photosbyCam.push(photo["camera"]["full_name"])
@@ -101,7 +101,7 @@ app.use('/weather', async (req, res) => {
     weather = await fetch(`https://api.nasa.gov/insight_weather/?api_key=${api_key}&feedtype=json&ver=1.0`)
     .catch(err => console.log(err))
     data = await weather.json()
-    const solBuffer = []
+    let solBuffer = []
     for (let sol of data.sol_keys){
         data[sol].name = sol
         solBuffer.push(data[sol])
